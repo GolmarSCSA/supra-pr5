@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+	<view id="es" viewBox="0 0 640 480"/>
+	<view id="de" viewBox="640 0 640 480"/>
+    <view id="fr" viewBox="1280 0 640 480"/>
+    <view id="nl" viewBox="1920 0 640 480"/>
+    <view id="it" viewBox="2560 0 640 480"/>
+    <view id="gb" viewBox="3200 0 640 480"/>
+    <view id="pt" viewBox="3840 0 640 480"/>
+
+
+	<g transform="translate(0 0)"  width="640" height="480">
+    <path fill="#c60b1e" d="M0 0h640v480H0z"/>
+    <path fill="#ffc400" d="M0 120h640v240H0z"/>
+	</g>
+
+	<g transform="translate(640 0)">
+    <path fill="#ffce00" d="M0 320h640v160H0z"/>
+    <path d="M0 0h640v160H0z"/>
+    <path fill="#d00" d="M0 160h640v160H0z"/>
+	</g>
+
+  <g transform="translate(1280 0)">
+    <path fill="#fff" d="M0 0h640v480H0z"/>
+    <path fill="#00267f" d="M0 0h213.3v480H0z"/>
+    <path fill="#f31830" d="M426.7 0H640v480H426.7z"/>
+  </g>
+
+  <g transform="translate(1920 0)">
+    <path fill="#21468b" d="M0 0h640v480H0z"/>
+    <path fill="#fff" d="M0 0h640v320H0z"/>
+    <path fill="#ae1c28" d="M0 0h640v160H0z"/>
+  </g>
+
+  <g transform="translate(2560 0)">
+    <path fill="#fff" d="M0 0h640v480H0z"/>
+    <path fill="#009246" d="M0 0h213.3v480H0z"/>
+    <path fill="#ce2b37" d="M426.7 0H640v480H426.7z"/>
+  </g>
+
+  <g transform="translate(3200 0)">
+    <path fill="#012169" d="M0 0h640v480H0z"/>
+    <path fill="#FFF" d="M75 0l244 181L562 0h78v62L400 241l240 178v61h-80L320 301 81 480H0v-60l239-178L0 64V0h75z"/>
+    <path fill="#C8102E" d="M424 281l216 159v40L369 281h55zm-184 20l6 35L54 480H0l240-179zM640 0v3L391 191l2-44L590 0h50zM0 0l239 176h-60L0 42V0z"/>
+    <path fill="#FFF" d="M241 0v480h160V0H241zM0 160v160h640V160H0z"/>
+    <path fill="#C8102E" d="M0 193v96h640v-96H0zM273 0v480h96V0h-96z"/>
+  </g>
+
+  <g transform="translate(3840 0)">
+    <path fill="red" d="M256 0h384v480H256z"/>
+    <path fill="#060" d="M0 0h256v480H0z"/>
+  </g>
+
+</svg>

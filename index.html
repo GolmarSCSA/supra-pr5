@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv=Expires content=0>
+    <meta http-equiv=Last-Modified content=0>
+    <meta http-equiv=Cache-Control content="no-cache, mustrevalidate">
+    <meta http-equiv=Pragma content=no-cache>
+    <meta charset=utf-8>
+    <meta http-equiv=X-UA-Compatible content="IE=edge">
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <link rel=icon href=./Logo.ico type=image/gif sizes=16x16>
+    <title>Config Manager</title>
+    <style>
+        html{
+            overflow: hidden;
+        }
+
+        body{
+            overflow: hidden;
+        }
+
+        .backdrop-golmar{
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            background-color: #343a40!important;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            flex-direction: column;
+            opacity: 1; /* Opacidad inicial */
+            transition: opacity 1s ease; /* Transición suave de opacidad */
+        }
+
+        /* Estilo para ocultar el overlay */
+        .backdrop-oculto {
+            opacity: 0;
+        }
+
+        /* Estilos para la barra de carga */
+        #progress-container {
+            width: 50%;
+            height: 30px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: #fa6400;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+
+        /* Estilos para el texto de porcentaje */
+        #progress-text {
+            text-align: center;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        
+    </style>
+
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.onbeforeunload = function (e) {
+                e = e || window.event;
+                // For IE and Firefox prior to version 4
+                if (e) {
+                    e.returnValue = 'Sure?';
+                }
+                // For Safari
+                return 'Sure?';
+            };
+
+        });
+    </script>
+</head>
+
+<body>
+
+
+    <div class="backdrop-golmar" id="overlay-golmar">
+        <div>
+            
+            <svg width="326" height="106" viewBox="0 0 326 106" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_1_126)">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M85.2832 32.2278C85.1711 30.537 87.1176 23.6116 78.4102 23.6116H71.0894C66.852 23.6116 65.138 25.3193 64.7936 29.5122C62.382 25.883 59.867 23.159 55.4056 23.048H37.9993C29.421 23.048 25.9846 26.6943 25.9846 33.261V50.5108C25.9846 57.0862 31.2556 62.9954 37.896 62.9954H64.9054V74.6858L64.7936 76.3682C63.4153 79.912 58.9542 80.8002 55.4056 79.5619C52.7701 78.7678 50.5912 76.7268 50.5912 73.7636C50.5912 72.5168 49.6868 71.1676 47.4992 71.1676H30.1014C28.732 71.1676 27.242 72.5168 27.242 73.2C27.466 78.8872 34.7954 84.6684 40.1698 84.6684H73.2512C82.863 84.6684 85.3866 75.5826 85.3866 74.4468L85.2746 32.2192L85.2832 32.2278ZM64.6902 47.4366C64.6902 50.5108 61.2536 55.2758 55.4142 56.1894C54.9492 56.292 54.5014 56.292 53.9328 56.292C49.6954 56.292 46.1384 53.3372 46.1384 50.6218V35.0714C46.1384 31.5618 49.8074 30.1954 54.0448 30.1954C54.51 30.1954 54.9578 30.315 55.4228 30.315C61.7188 30.981 64.6988 35.191 64.6988 37.454V47.4366H64.6902Z" fill="white"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M130.844 42.219H106.126C102.689 42.219 99.8214 45.0626 99.8214 48.4614V72.4144C99.8214 75.8046 102.681 78.6482 106.126 78.6482H130.844C134.392 78.6482 137.260 75.8132 137.260 72.4144V48.4614C137.260 45.054 134.392 42.219 130.844 42.219ZM122.602 69.2378C122.602 69.81 121.577 72.9866 118.485 72.867C114.825 72.867 114.4802 69.1268 114.4802 69.0158V51.3134C114.3596 51.3134 115.281 47.5646 118.485 47.5646C121.922 47.5646 122.602 51.4074 122.602 51.4074V69.2378Z" fill="white"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M278.164 71.7312V46.9926C278.164 44.6186 276.098 42.219 273.694 42.219L265.676 42.33C262.818 42.33 261.912 44.2514 261.672 45.8654C261.672 44.26 259.502 42.7912 257.899 42.33C257.666 42.33 257.33 42.219 257.21 42.219H245.196C241.638 42.219 239.692 44.6186 239.692 47.4366V71.6118C239.692 74.7884 242.664 78.5458 246.444 78.5458H255.376C256.176 78.5458 257.09 78.4262 257.899 78.0846C260.414 77.188 262.36 75.1386 262.472 73.4306C262.472 75.2496 264.66 78.5458 267.51 78.5458L273.574 78.6568C278.716 78.6568 278.156 74.9164 278.156 71.7312H278.164ZM262.37 64.2336C262.258 66.7358 260.19 69.1182 257.908 69.9124C257.442 70.0148 256.866 70.143 256.418 70.143C253.55 70.143 253.446 66.8382 253.446 65.7196V53.2264C253.446 50.3998 255.728 49.0334 257.778 49.2554H257.9C260.302 49.6056 262.248 52.7738 262.36 54.9256V64.2336H262.37Z" fill="white"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M53.4592 4.2014C26.3376 4.2014 4.24606 25.9856 4.24606 53.0042C4.24606 80.0229 26.3376 101.798 53.4678 101.798C67.8854 101.798 81.9758 95.3428 91.1312 84.5574L96.2816 84.6684C86.4458 98.0584 70.185 106 53.4678 106C24.0468 106 0 82.286 0 53.0042C0 23.7226 24.0468 0 53.4592 0C70.2884 0 86.4372 7.95022 96.3936 21.34H91.1226C81.9672 10.6658 67.8768 4.2014 53.4592 4.2014Z" fill="white"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M160.145 75.2496C160.145 77.188 158.655 78.6568 156.708 78.6568H148.466C146.52 78.6568 145.021 77.188 145.021 75.2496V24.5168C145.021 22.7064 146.52 21.229 148.466 21.229H156.708C158.655 21.229 160.145 22.6978 160.145 24.5168V75.2496Z" fill="white"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M230.778 75.019C230.778 76.6158 228.479 78.6568 226.54 78.6568H219.108C217.151 78.6568 215.662 76.2742 215.662 74.4554V52.4322C215.662 47.001 207.299 50.5108 207.299 55.8394V74.4554C207.299 76.3768 205.018 78.6568 203.062 78.6568H195.862C194.027 78.6568 192.305 76.2742 192.305 74.4554V52.4322C192.305 47.2146 183.959 49.9386 183.959 55.959V74.4554C183.959 76.1632 182.469 78.6568 179.377 78.6568H171.591C169.644 78.6568 168.154 77.0684 168.154 75.2496V45.3956C168.154 43.5852 169.765 42.219 171.712 42.219H179.954C182.348 42.219 183.726 44.499 184.407 45.9592C184.527 44.149 186.474 42.219 189.109 42.219H202.382C205.129 42.219 207.299 44.8236 207.55 46.0788C207.876 44.371 209.952 42.219 211.787 42.219H225.972C229.046 42.219 230.778 44.721 230.778 46.3094V75.019Z" fill="white"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M326 52.5602C326 55.3868 323.83 56.7532 322.236 56.7532H315.364C312.272 56.7532 310.436 54.8232 310.436 52.9018C310.436 50.3998 310.1 48.0088 306.664 49.264C304.606 49.9386 301.394 52.6712 301.394 55.9674V75.4886C301.394 77.3076 299.904 78.6652 297.956 78.6652H289.714C287.776 78.6652 286.278 77.077 286.278 75.258V45.6348C286.278 43.944 287.898 42.2276 289.714 42.2276H297.388C299.334 42.2276 302.092 45.5152 302.092 47.3342C302.996 45.6348 307.13 41.5444 311.814 41.5444H319.376C324.864 41.5444 326 45.7544 326 47.5732V52.5688V52.5602Z" fill="white"/>
+                </g>
+                <defs>
+                    <clipPath id="clip0_1_126">
+                        <rect width="326" height="106" fill="white"/>
+                    </clipPath>
+                </defs>
+            </svg>
+            
+    
+        </div>
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+
+    <div id=bodySite>
+        <div id=page-container>
+            <div id=content-wrap>
+                <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                    <div class=col-4>
+                        <a class="navbar-brand logoImage settingLeft" id=mainScreenButton href>
+                            <img class="logoImage logoHeader" src=./logoHeader.png />
+                        </a>
+                    </div>
+                    <div class="col-2 settingCenter">
+                    </div>
+                    <div class="col-6 settingRight">
+                        <div id=R5NavButton>
+                            <div class=dropdown id=dsContainerR5 data-toggle=modal data-target=#modalDivsR5>
+                                <img id=idAuxR5 class=dropbtn src=./ds.png />
+                            </div>
+                            <div class="modal fade" id=modalDivsR5 tabindex=-1 role=dialog aria-labelledby=modalDivsLabelr5 aria-hidden=true>
+                                <div class=modal-dialog role=document>
+                                    <div class="modal-content maxWidthModal">
+                                        <div class=modal-header>
+                                            <h5 class=modal-title id=modalDivsLabelr5>DIPS</h5>
+                                            <button type=button class=close data-dismiss=modal aria-label=Close>
+                                                <span aria-hidden=true>&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class=modal-body style="text-align:center">
+                                            <div class=form-row>
+                                                <div class=col>
+                                                    <span>SW1</span>
+                                                </div>
+                                                <div class=miniLabel>
+                                                    <span>ON</span>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="1_r5">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 1 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="2_r5">
+                                                                <span class=slider_disabled></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 2 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="3_r5">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 3 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="4_r5">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 4 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class=form-row>
+                                                <div class=col style=opacity:0>
+                                                    <span>SW1</span>
+                                                </div>
+                                                <div class=miniLabel>
+                                                    <span>ON</span>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="5_r5">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 5 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="6_r5">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 6 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="7_r5">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 7 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="8_r5">
+                                                                <span class=slider_disabled></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 8 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer buttonsModalImages">
+                                            <button type=button class="close_label_mdal btn btn-outline-secondary buttonModalImg" data-dismiss=modal>Close</button>
+                                            <button type=button class="1save_label_mdal btn btn-outline-golmar buttonModalImg" id="saveDipR5">Save</button>
+                                        </div>
+                                        <div id=modalImagenesHelpR5 class=modal-images>
+                                            <span id=closeModalImagesR5 class=close>&times;</span>
+                                            <img class="modal-content modal-content-images" id=ImagenModalImagenesR5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id=PlusNavButton>
+                            <div class=dropdown id=dsContainerPlus data-toggle=modal data-target=#modalDivsPlus>
+                                <img id=idAuxPlus class=dropbtn src=./ds.png />
+                            </div>
+                            <div class="modal fade" id=modalDivsPlus tabindex=-1 role=dialog aria-labelledby=modalDivsLabelPlus aria-hidden=true>
+                                <div class=modal-dialog role=document>
+                                    <div class="modal-content maxWidthModal">
+                                        <div class=modal-header>
+                                            <h5 class=modal-title id=modalDivsLabelPlus>DIPS</h5>
+                                            <button type=button class=close data-dismiss=modal aria-label=Close>
+                                                <span aria-hidden=true>&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class=modal-body style="text-align:center">
+                                            <div class=form-row>
+                                                <div class=col>
+                                                    <span>SW1</span>
+                                                </div>
+                                                <div class=miniLabel>
+                                                    <span>ON</span>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="1_plus">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 1 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="2_plus">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 2 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="3_plus">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 3 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="4_plus">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 4 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="5_plus">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 5 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class=form-row>
+                                                <div class=col style="opacity:0">
+                                                    <span>SW1</span>
+                                                </div>
+                                                <div class=miniLabel>
+                                                    <span>ON</span>
+                                                </div>
+
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="6_plus">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 6 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="7_plus">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 7 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="8_plus">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 8 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="9_plus">
+                                                                <span class=slider_disabled></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 9 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="10_plus">
+                                                                <span class=slider_disabled></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 10 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class=form-row>
+                                                <div class=col>
+                                                    <span>SW2</span>
+                                                </div>
+                                                <div class=miniLabel>
+                                                    <span>ON</span>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="11_plus">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 1 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="12_plus">
+                                                                <span class=slider_disabled></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 2 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="13_plus">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 3 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="14_plus">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 4 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="15_plus">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 5 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class=form-row>
+                                                <div class=col style="opacity:0">
+                                                    <span>SW1</span>
+                                                </div>
+                                                <div class=miniLabel>
+                                                    <span>ON</span>
+                                                </div>
+
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="16_plus">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 6 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="17_plus">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 7 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="18_plus">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 8 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="19_plus">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 9 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+
+                                                <div class=col>
+                                                    <ul>
+                                                        <li>
+                                                            <label class=switch>
+                                                                <input type=checkbox id="20_plus">
+                                                                <span class=slider></span>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <span> 10 </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer buttonsModalImages">
+
+                                            <button type=button class="close_label_mdal btn btn-outline-secondary buttonModalImg" data-dismiss=modal>Close</button>
+                                            <button type=button class="1save_label_mdal btn btn-outline-golmar buttonModalImg" id="saveDipPlus">Save</button>
+                                        </div>
+                                        <div id="modalImagenesHelpPlus" class=modal-images>
+                                            <span id="closeModalImagesPlus" class=close>&times;</span>
+                                            <img class="modal-content modal-content-images" id="ImagenModalImagenesPlus">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class=dropdown id="langContainer">
+                            <a label_language="es" class="nav-link dropdown-toggle link_top" id="dropdown_main_link" complete_label="spanish" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="es_flag" class="flag-icon flag-icon-es"> </span><span id="text_es" class="text_en_c">  ES</span></a>
+
+                            <div class="dropdown-menu modified_lang_menu" aria-labelledby="dropdown_main_link">
+                                <a label_language="en" class="dropdown-item lang_button" id="english" href="#"><span id="en_flag" class="flag-icon flag-icon-en"> </span><span id="text_en" class="text_en_c">  EN</span></a>
+                                <a label_language="nl" class="dropdown-item lang_button" id="nederlands" href="#"><span id="nl_flag" class="flag-icon flag-icon-nl"> </span><span id="text_nl" class="text_en_c">  NL</span></a>
+                                <!--<a label_language="it" class="dropdown-item lang_button" id=italiano href="#"><span id="it_flag" class="flag-icon flag-icon-it"> </span><span id="text_it" class="text_en_c">  IT</span></a>
+                                <a label_language="de" class="dropdown-item lang_button" id=deutsch href="#"><span id="de_flag" class="flag-icon flag-icon-de"> </span><span id="text_de" class="text_en_c">  DE</span></a>-->
+                                <a label_language="pt" class="dropdown-item lang_button" id="portuguese" href="#"><span id="pt_flag" class="flag-icon flag-icon-pt"> </span><span id="text_de" class="text_en_c">  PT</span></a>
+                                <a label_language="fr" class="dropdown-item lang_button" id="francais" href="#"><span id="fr_flag" class="flag-icon flag-icon-fr"> </span><span id="text_fr" class="text_en_c">  FR</span></a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <section id=mainSettings>
+                    <div class="card cardParamsSettings" id=settingsCard>
+                        <div class="version-div">
+                            <div id="version" class="text-center">
+                                PLUS/R5
+                                <span id="version-span">
+
+                                </span>
+                            </div>
+                        </div>
+                        <div id=cardSettingsTitle class="card-header titleCard  form-inline w-100">
+                            <div class="col-3">
+                            </div>
+                            <div id="settings_div_title" class="col-6">
+                                Settings
+                            </div>
+                            <div class="col-3 text-right">
+                            </div>
+                        </div>
+                        <div class=divCardPadding>
+                            <div class=form-row>
+                                <div class="col alignLabel">
+                                    <label id=technologyLabel>Technology</label>
+                                </div>
+                                <div class=col>
+                                    <select id=technology class=form-control>
+                                        <option id=techPlus valorSend=1>Plus</option>
+                                        <option id=techR5 valorSend=2>R5</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id=backboneContainer class="backboneContainer">
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=backboneLabel>Backbone</label>
+                                    </div>
+                                    <div class=col>
+                                        <input type=number placeholder=0...250 class="form-control montante fsize08" min=0 max=250 id=backbone />
+                                    </div>
+                                </div>
+                            </div>
+                            <div id=mainBoardContainer>
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=mainBoardLabel>Main board</label>
+                                    </div>
+                                    <div class=col>
+                                        <select id=mainBoard class=form-control>
+                                            <option selected class=yesLabel valorSend=1>Yes</option>
+                                            <option class=NoLabel valorSend=0>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id=generalContainer>
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=generalLabel>General</label>
+                                    </div>
+                                    <div class=col>
+                                        <select id=general class=form-control>
+                                            <option selected class=yesLabel valorSend=1>Yes</option>
+                                            <option class=NoLabel valorSend=0>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id=videoSignalContainer>
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=videoSignalLabel>Video signal</label>
+                                    </div>
+                                    <div class=col>
+                                        <select id=videoSignal class=form-control>
+                                            <option id=coaxial selected valorSend=0>Coaxial</option>
+                                            <option id=twistedPair valorSend=1>Twisted pair</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id=communicationResistanceContainer>
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=communicationsResistanceLabel>Communications resistance</label>
+                                    </div>
+                                    <div class=col>
+                                        <select id=communicationsResistance class=form-control>
+                                            <option id=noneCommunicationResistance selected valorSend=0>None</option>
+                                            <option id=r5CommRes valorSend=1>R5</option>
+                                            <option id=plusCommRes valorSend=2>Plus</option>
+                                            <option id=unoCommRes valorSend=3>Uno</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id=autoSwitchOnContainer>
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=autoswitchOnLabel>Autoswitch-On</label>
+                                    </div>
+                                    <div class=col>
+                                        <select id=autoswitchOn class=form-control>
+                                            <option selected class=yesLabel valorSend=1>Yes</option>
+                                            <option class=NoLabel valorSend=0>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id=withCameraContainer>
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=withCameraLabel>With camera</label>
+                                    </div>
+                                    <div class=col>
+                                        <select id=withCamera class=form-control>
+                                            <option selected class=yesLabel valorSend=1>Yes</option>
+                                            <option class=NoLabel valorSend=0>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id=cameraLightContainer>
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=cameraLightLabel>Camera light</label>
+                                    </div>
+                                    <div class=col>
+                                        <select id=cameraLight class=form-control>
+                                            <option selected class=yesLabel valorSend=1>Yes</option>
+                                            <option class=NoLabel valorSend=0>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id=openingTimeContainer>
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=openingTimeLabel>Opening time</label>
+                                    </div>
+                                    <div class=col>
+                                        <input type=number placeholder=0...99 class="form-control fsize08" min=0 max=99 id=openingTimePlusR5 />
+                                    </div>
+                                </div>
+                            </div>
+                            <div id=localLightsContainer>
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=localLightsLabel>Number of enabled buttons</label>
+                                    </div>
+                                    <div class=col>
+                                        <select id=localLights class=form-control>
+                                            <option id=localLightsOff selected valorSend=0>Apagados</option>
+                                            <option id=localLightsOn valorSend=1>Encendidos</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id=numberOfEnabledButtonsContainer class="hidden">
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=numberOfEnabledButtonsLabel>Number of enabled buttons</label>
+                                    </div>
+                                    <div class=col>
+                                        <select id=numberOfEnabledButtons class=form-control>
+                                            <option id=noneNumberOfEnabledButtons selected valorSend=0>None</option>
+                                            <option id=only1NumberOfEnabledButtons valorSend=1>Only 1</option>
+                                            <option id=bothNumberOfEnabledButtons valorSend=2>Both</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id=callToCentralContainer>
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=callToCentralLabel>Call to central</label>
+                                    </div>
+                                    <div class=col>
+                                        <select id=callToCentral class=form-control>
+                                            <option selected class=yesLabel valorSend=1>Yes</option>
+                                            <option class=NoLabel valorSend=0>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id=vocalMessageContainer>
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=vocalMessageLabel>Vocal message</label>
+                                    </div>
+                                    <div class=col>
+                                        <select id=vocalMessage class=form-control>
+                                            <option selected valorSend=0 class="offLabel">Off</option>
+                                            <option valorSend=1 class="tonesLabel">Tones</option>
+                                            <option valorSend=2 class="vocalMessageLabel">Vocal message</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id=toneVolumeContainer>
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=toneVolumeLabel>Synthesis / tones volume: </label>
+                                    </div>
+                                    <div class=col>
+                                        <select id=toneVolume class=form-control>
+                                            <option id=highToneVolume selected valorSend=1>High</option>
+                                            <option id=lowToneVolume valorSend=0>Low</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id=sintesisLanguageContainer>
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=sintesisLanguageLabel>Synthesis language</label>
+                                    </div>
+                                    <div class=col>
+                                        <select id=sintesisLanguage class=form-control>
+                                            <option valorSend=0 selected>English</option>
+                                            <option valorSend=1>Español</option>
+                                            <option valorSend=2>Français</option>
+                                            <option valorSend=3>Nederlands</option>
+                                            <option valorSend=4>Português</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id=duskSensorContainer>
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=duskSensorLabel>Dusk sensor</label>
+                                    </div>
+                                    <div class=col>
+                                        <select id=duskSensor class=form-control>
+                                            <option selected class=yesLabel valorSend=1>Yes</option>
+                                            <option class=NoLabel valorSend=0>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id=auxiliaryButtonContainer>
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=auxiliaryButtonLabel>Auxiliary button</label>
+                                    </div>
+                                    <div class=col>
+                                        <select id=auxiliaryButton class=form-control>
+                                            <option selected class=yesLabel valorSend=1>Yes</option>
+                                            <option class=NoLabel valorSend=0>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id=ConfigPulsContainer>
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=ConfigPulsLabel>Advanced button settings</label>
+                                    </div>
+                                    <div class=col>
+                                        <select id=ConfigPuls class=form-control>
+                                            <option selected class=yesLabel valorSend=1>Yes</option>
+                                            <option class=NoLabel valorSend=0>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                      
+
+                            
+                            <div id="notRespondingMontContainer" class="backboneContainer">
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=NotRespondingMontLabel>Not responding backbone</label>
+                                    </div>
+                                    <div class=col>
+                                        <input type=number class="form-control montante fsize08" min=0 max=250 placeholder="0...250" id=NotRespondingMont>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="notRespondingAddrContainer">
+                                <hr  class="hideOnR5">
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=NotRespondingAddrLabel>Not responding address</label>
+                                    </div>
+                                    <div class=col>
+                                        <input type=number class="form-control fsize08" min=0 max=999 placeholder="0...999" id=NotRespondingAddr>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="withRedirectContainer" class="d-flex justify-content-between">
+                                <div class="form-group form-check alignLabel">
+                                    <input type="checkbox" class="form-check-input" id="withRedirect">
+                                    <label class="form-check-label" id="withRedirectLabel" for="withRedirect">Con desvío</label>
+                                </div>
+
+                                <div id="alertNotResponding">
+                                    <p class="text-danger small" id="alertNotRespondingLabel"></p>
+                                </div>
+                            </div>
+
+                            <div id="offsetContainer">
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=offsetFieldLabel>Offset</label>
+                                    </div>
+                                    <div class=col>
+                                        <input type=number class="form-control fsize08" min=0 max=131 placeholder="0...131" id=offsetField>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="cameraVideoCuadranteContainer">
+                                <hr>
+                                <div class=form-row>
+                                    <div class="col alignLabel">
+                                        <label id=cameraVideoCuadranteLabel>Orientación de la cámara (cuadrante): </label>
+                                    </div>
+                                    <div class=col>
+                                        <select id=cameraVideoCuadrante class=form-control>
+                                            <option selected id="no-zoom" valorSend=0>Sin zoom</option>
+                                            <option valorSend=1>1</option>
+                                            <option valorSend=2>2</option>
+                                            <option valorSend=3>3</option>
+                                            <option valorSend=4>4</option>
+                                            <option valorSend=5>5</option>
+                                            <option valorSend=6>6</option>
+                                            <option valorSend=7>7</option>
+                                            <option valorSend=8>8</option>
+                                            <option valorSend=9>9</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--<hr>-->
+                            <div class="form-inline dflex-bt" style="display: none;">
+                                <div id="InvertPulsContainer">
+                                    <div class="form-group form-check">
+                                        <input type="checkbox" class="form-check-input" id="InvertPuls">
+                                        <label class="form-check-label" id="inv_btn_lab" for="InvertPuls">Invert buttons</label>
+                                    </div>
+                                </div>
+                                <div id="InvertColContainer">
+                                    <div class="form-group form-check">
+                                        <input type="checkbox" class="form-check-input" id="InvertCols">
+                                        <label class="form-check-label" id="inv_col_lab" for="InvertCols">Invert columns</label>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id=controlAccess>
+                    <div class="card cardParamsAccess" id=accessCard>
+                        <div class="card-header titleCard form-inline w-100">
+                            <div class="col-3">
+                            </div>
+                            <div id=accessTitle class="col-6">
+                                Assign buttons
+                            </div>
+                            <div class="col-3 text-right">
+                                <a id="factory_values" class="reset_default_buttons">Default</a>
+                            </div>
+                        </div>
+                        <div id="inserted_modals_group">
+
+                        </div>
+                        <div id="inserted_modules_group"></div>
+
+
+                        <nav class="centered_flex">
+                            <ul class="pagination" id="module_pages">
+
+                            </ul>
+                        </nav>
+                    </div>
+                </section>
+                <section id=transfer>
+                    <div class="card cardParamsTransfer" id=transferCard>
+                        <div class="card-header titleCard form-inline w-100">
+                            <div class="col-3">
+                            </div>
+                            <span id="transferTitle" class="col-6"></span>
+                            <div class="col-3 text-right">
+                                <a id="get_version" class="getversion" data-toggle="modal" data-target="#get_version_modal">Version</a>
+                            </div>
+                        </div>
+                        <div class="divCardPadding formatTitles">
+                            <h6 id=SaveConfigTitle> SAVE CONFIGURATION </h6>
+                            <div class=form-row>
+                                <div class="col alignLabel alignLeft">
+                                    <label id=SendDataLabel>Send data to device and close</label>
+                                </div>
+                                <div class="col alignRight">
+                                    <button type=button id=sendToDevice class="btn btn-outline-golmar" onclick=sendDataConfig()>Send and close</button>
+                                </div>
+                            </div>
+                            <div class=form-row>
+                                <div class="col alignLabel alignLeft">
+                                    <label id=saveConfigLabel>Save configuration file</label>
+                                </div>
+                                <div class="col alignRight">
+                                    <button type=button id=saveConfFile onclick="makeFileAndDownload()" class="btn btn-outline-golmar">Save</button>
+                                </div>
+                            </div>
+                            <hr>
+                            <h6 id=FRESETTITLE> FACTORY RESET </h6>
+                            <div class=form-row>
+                                <div class="col alignLabel alignLeft">
+                                    <label id=FRESETEXPL>Se establecen valores de fábrica de la placa</label>
+                                </div>
+                                <div class="col alignRight">
+                                    <button type=button id=factoryReset class="btn btn-outline-golmar" onclick=factoryReset()>Reset</button>
+                                </div>
+                            </div>
+                            <hr>
+                            <h6 id=ImportConfigFileLabel> IMPORT CONFIGURATION FROM FILE </h6>
+                            <div class=form-row>
+                                <div class="col alignCenter">
+                                    <div class="form-group">
+                                        <div class="input-group input-file" name="Fichier1">
+                                            <span class="input-group-btn">
+                                                <button id="choose_btn1" class="btn btn-outline-info btn-choose" onclick="getFile('ImportFile')" type="button">Choose</button>
+                                            </span>
+                                            <input type="text" class="form-control ml-1" id="fileNameCfg" disabled placeholder='Choose a file...' />
+                                            <span class="input-group-btn">
+                                                <button class="btn btn btn-outline-golmar ml-1" disabled type="button" onclick="loadCfg()" id="sendBtnCFG">Submit</button>
+                                            </span>
+                                            <div style="height:0;width:0;overflow:hidden">
+                                                <input id=ImportFile type=file value=upload name="file" accept=".json" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="alert alert-danger hidden not_valid_FW" role="alert">
+                                        File not valid. Choose another one.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id=errorSec>
+                    <div class=container id=errorContainer>
+                        <h1> ERROR </h1>
+                        <p> There was an error and the data was not loaded correctly. Try to restart the Wi-Fi or restart the page. </p>
+                        <button type=button class="btn btn-outline-golmar" onclick="restartPage()">Restart the page</button>
+                    </div>
+                </section>
+
+                <div class="modal fade" id=get_version_modal tabindex=-1 role=dialog >
+                    <div class="modal-dialog modal-xs centerModal" role=document>
+                        <div class=modal-content>
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modal_version_title" class="font-weight-bold">Version</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body text-left modal-box">
+                                <p>W: <span id="wroom_v"></span></p>
+                                <p>M: <span id="micro_v"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade loadingModal" id=restartPage tabindex=-1 role=dialog aria-labelledby=restartPageLabel data-keyboard="false" data-backdrop="static">
+                    <div class="modal-dialog modal-xs centerModal" role=document>
+                        <div class=modal-content>
+                            <div class="modal-body text-center modal-box">
+                                <div clas=loader-txt>
+                                    <h2 class=LoadingTitle>Loading...</small>
+                                    </h2>
+                                </div>
+                                <div class=loader></div>
+                                <div clas=loader-txt>
+                                    <p><span class=Loading1Text>We are reading the data.</span> <br><br><small class=Loading2Text>Wait a moment please...</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade loadingModal" id=leerDatos tabindex=-1 role=dialog aria-labelledby=leerDatosLabel data-keyboard="false" data-backdrop="static">
+                    <div class="modal-dialog modal-xs centerModal" role=document>
+                        <div class=modal-content>
+                            <div class="modal-body text-center modal-box">
+                                <div clas=loader-txt>
+                                    <h2 class=LoadingTitle>Loading...</small>
+                                    </h2>
+                                </div>
+                                <div class=loader></div>
+                                <div clas=loader-txt>
+                                    <p><span class=Loading1Text>We are reading the data.</span> <br><br><small class=Loading2Text>Wait a moment please...</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade loadingModal" id=enviarDatos tabindex=-1 role=dialog aria-labelledby=enviarDatosLabel data-keyboard="false" data-backdrop="static">
+                    <div class="modal-dialog modal-xs centerModal" role=document>
+                        <div class=modal-content>
+                            <div class="modal-body text-center modal-box">
+                                <div clas=loader-txt>
+                                    <h2 class=LoadingTitle>Loading...</small>
+                                    </h2>
+                                </div>
+                                <div class=loader></div>
+                                <div clas=loader-txt>
+                                    <p><span class=Loading1Text>We are reading the data.</span> <br><br><small class=Loading2Text>Wait a moment please...</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer id=footer>
+                <div class=container>
+                    <div class=row>
+                        <div class="col-4 footerButton" id=mainSettingsButton>
+                            <img class=footerImage src=./config.png />
+                            <figcaption class=caption id=settingsLabel>SETTINGS</figcaption>
+                        </div>
+                        <div class="col-4 footerButton" id=controlAccessButton>
+                            <img class=footerImage src=./click.png />
+                            <figcaption class=caption id=buttonsLabel>BUTTONS</figcaption>
+                        </div>
+                        <div class="col-4 footerButton" id=transferButton>
+                            <img class=footerImage src=./transferir.png />
+                            <figcaption class=caption id=transferLabel>TRANSFER</figcaption>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</body>
+<script>
+
+    const maxFiles = 15;
+
+    function cargarScript(url_fnc, callback) {
+        url = url_fnc;
+        let script = document.createElement('script');
+        script.onload = callback;
+        script.onerror = function() {
+            console.log("ERROR");
+            // Si hay un error al cargar el script, reintenta después de un breve intervalo
+            setTimeout(function() {
+                cargarScript(url_fnc, callback);
+            }, 1000); // Inténtalo de nuevo después de 1 segundo
+        };
+        script.src = url_fnc;
+        script.type = 'text/javascript';
+        document.head.appendChild(script);
+    }
+
+    function cargarCSS(url_fnc, callback) {
+        url = url_fnc;
+        let link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.onload = callback;
+        link.onerror = function() {
+            console.log("ERROR");
+            setTimeout(function() {
+                cargarCSS(url_fnc, callback);
+            }, 1000);
+        };
+        link.href = url_fnc;
+        document.head.appendChild(link);
+    }
+
+    function cargarImagen(url_fnc, id, callback) {
+        url = url_fnc;
+        let imagen = document.getElementById(id);
+        imagen.onload = callback;
+        imagen.onerror = function() {
+            console.log("ERROR");
+            setTimeout(function() {
+                cargarImagen(url_fnc, id, callback);
+            }, 1000);
+        };
+        imagen.src = url_fnc;
+    }
+
+    function incrementarBarraDeCarga() {
+        var progressBar = document.getElementById('progress-bar');
+
+        // Obtener el valor actual de la barra de carga
+        var width = parseInt(progressBar.style.width) || 0;
+
+        // Incrementar la barra de carga en 10% (puedes ajustar el valor)
+        width += 100/maxFiles;
+        console.log(width);
+
+        // Limitar el valor máximo de la barra de carga al 100%
+        if (width > 100) {
+        width = 100;
+        }
+
+        // Actualizar la barra de carga y el texto de porcentaje
+        progressBar.style.width = width + '%';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        function setupStartParams() {
+            document.getElementById("mainSettingsButton").addEventListener('click', () => {
+                anywhere_to_mainSettings();
+            });
+            document.getElementById("controlAccessButton").addEventListener('click', () => {
+                anywhere_to_controlAccess();
+            });
+            document.getElementById("transferButton").addEventListener('click', () => {
+                anywhere_to_transfer();
+            });
+
+            instanceFunctions();
+        }
+
+        try {
+            cargarScript('./global_variables.js', function() {
+                console.log(`El script global_variables.js se ha cargado correctamente.`);
+                incrementarBarraDeCarga();
+                cargarScript('./files/config.js', function () {
+                    console.log('El script config.js se ha cargado correctamente.');
+                    incrementarBarraDeCarga();
+                    cargarScript('./jquery.min.js', function () {
+                        console.log('El script jquery.min.js se ha cargado correctamente.');
+                        incrementarBarraDeCarga();
+                        cargarScript('./jquery.i18n.js', function () {
+                            console.log('El script jquery.i18n.js se ha cargado correctamente.');
+                            incrementarBarraDeCarga();
+                            cargarScript('./popper.min.js', function () {
+                                console.log('El script popper.min.js se ha cargado correctamente.');
+                                incrementarBarraDeCarga();
+                                cargarScript('./bootstrap.min.js', function () {
+                                    console.log('El script bootstrap.min.js se ha cargado correctamente.');
+                                    incrementarBarraDeCarga();
+                                    cargarCSS('./bootstrap.min.css', function () {
+                                        console.log('El CSS bootstrap.min.css se ha cargado correctamente.');
+                                        incrementarBarraDeCarga();
+                                        cargarScript('./globalFunctions.js', function () {
+                                            console.log('El script globalFunctions.js se ha cargado correctamente.');
+                                            incrementarBarraDeCarga();
+                                            cargarScript('./lang_conf.js', function () {
+                                                console.log('El script lang_conf.js se ha cargado correctamente.');
+                                                incrementarBarraDeCarga();
+                                                cargarScript('./languages.js', function () {
+                                                    console.log('El script languages.js se ha cargado correctamente.');
+                                                    incrementarBarraDeCarga();
+                                                    cargarCSS('./alertify.min.css', function () {
+                                                        console.log('El CSS alertify.min.css se ha cargado correctamente.');
+                                                        incrementarBarraDeCarga();
+                                                        cargarCSS('./default.min.css', function () {
+                                                            console.log('El CSS default.min.css se ha cargado correctamente.');
+                                                            incrementarBarraDeCarga();
+                                                            cargarScript('./alertify.min.js', function () {
+                                                                console.log('El script alertify.min.js se ha cargado correctamente.');
+                                                                incrementarBarraDeCarga();
+                                                                 cargarCSS('./styles.css', function () {
+                                                                    console.log('El CSS styles.css se ha cargado correctamente.');
+                                                                    incrementarBarraDeCarga();
+                                                                     Promise.all([
+                                                                        window.scrollTo(0, 0),
+                                                                        init_languages(true),
+                                                                        leerDatos()
+                                                                    ]).then(() => {
+                                                                        setupStartParams();
+                                                                        var overlay = document.getElementById('overlay-golmar');
+                                                                        overlay.classList.add('backdrop-oculto');
+                                                                    }); 
+
+                                                                }); 
+                                                            });
+                                                        });
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+            
+        } catch (error) {
+            var overlay = document.getElementById('overlay-golmar');
+            overlay.classList.add('backdrop-oculto');
+            anywhere_to_error();
+        }
+
+
+
+
+        var overlay = document.getElementById('overlay-golmar');
+        var htmlElement  = document.getElementsByTagName('html')[0];
+        var bodyElement  = document.getElementsByTagName('body')[0];
+
+        // Detectar cuando la opacidad del overlay es igual a 1
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                const opacity = window.getComputedStyle(overlay).opacity;
+                if (mutation.attributeName === 'class') {
+                    if (opacity === '1') {
+                        setTimeout(() => {
+                            overlay.style.display = 'none';
+                            htmlElement.style.overflow = 'visible';
+                            bodyElement.style.overflow = 'visible';
+
+                        }, 500);
+                    }
+                    // Cuando la opacidad es 1, ocultar el overlay después de un breve retraso
+                    
+                }
+            });
+        });
+
+        // Observar cambios en el estilo del overlay
+        observer.observe(overlay, { attributes: true });
+    });
+
+
+
+    //resetFiles();
+</script>
+
+</html>
