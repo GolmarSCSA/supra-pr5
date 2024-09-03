@@ -687,9 +687,11 @@ function desactivar_modal_loading_RecieveAll(modal) {
         case 0:
         case 1:
             $(".direccionModal").attr("placeholder", "1-999");
+            $(".direccionModal").attr("max", "999");
             break;
         case 2:
             $(".direccionModal").attr("placeholder", "1-250");
+            $(".direccionModal").attr("max", "250");
             break;
     }
 
@@ -1765,6 +1767,7 @@ function setPlusFields() {
     }
 
     $(".direccionModal").attr("placeholder", "1-999");
+    $(".direccionModal").attr("max", "999");
     $("#NotRespondingAddr").attr("placeholder", "1-999");
 
 $('#vocalMessage').change();
@@ -1812,6 +1815,7 @@ function setR5Fields() {
     }
 
     $(".direccionModal").attr("placeholder", "1-250");
+    $(".direccionModal").attr("max", "250");
     $("#NotRespondingAddr").attr("placeholder", "1-250");
 
 
