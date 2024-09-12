@@ -1080,9 +1080,25 @@ function set_modal_buttons() {
     input_div_body_form_d4.className = "form-control direccionModal";
     input_div_body_form_d4.id = "AddrBtn";
     input_div_body_form_d4.name = "address";
-    input_div_body_form_d4.min = "1";
-    input_div_body_form_d4.max = "999";
-    input_div_body_form_d4.setAttribute("placeholder", "1-999");
+
+    switch (msg_recieved.main_conf.technology) {
+        case 0:
+            
+            break;
+    
+        case 1:
+            input_div_body_form_d4.min = "1";
+            input_div_body_form_d4.max = "999";
+            input_div_body_form_d4.setAttribute("placeholder", "1-999");
+            break;
+        case 2:
+            input_div_body_form_d4.min = "1";
+            input_div_body_form_d4.max = "250";
+            input_div_body_form_d4.setAttribute("placeholder", "1-250");
+            break;
+    }
+
+
     div_body_form_d4.appendChild(label_div_body_form_d4);
     div_body_form_d4.appendChild(input_div_body_form_d4);
     //FIN SEGUNDO DIV
@@ -1756,21 +1772,11 @@ function setPlusFields() {
 
     $(".hideOnR5").hide();
 
-
-    switch (msg_recieved.main_conf.synthesis_presence) {
-        case 1:
-            $('#sintesisLanguageContainer').show();
-            break;
-        case 0:
-            $('#sintesisLanguageContainer').hide();
-            break;
-    }
-
     $(".direccionModal").attr("placeholder", "1-999");
     $(".direccionModal").attr("max", "999");
     $("#NotRespondingAddr").attr("placeholder", "1-999");
 
-$('#vocalMessage').change();
+    $('#vocalMessage').change();
 }
 
 function setR5Fields() {
@@ -1804,15 +1810,6 @@ function setR5Fields() {
     $('#InvertColContainer').show();
 
     $(".hideOnR5").show();
-
-    switch (msg_recieved.main_conf.synthesis_presence) {
-        case 1:
-            $('#sintesisLanguageContainer').show();
-            break;
-        case 0:
-            $('#sintesisLanguageContainer').hide();
-            break;
-    }
 
     $(".direccionModal").attr("placeholder", "1-250");
     $(".direccionModal").attr("max", "250");
@@ -1848,9 +1845,7 @@ function setDataToFields() {
         }
     }
 
-    let vocalMessage = msg_recieved.main_conf.activatedSynthesis == 1 ? 1 : msg_recieved.main_conf.callTones;
-
-
+    let vocalMessage = msg_recieved.main_conf.activatedSynthesis == 1 ? 2 : msg_recieved.main_conf.callTones;
 
     $('#technology option[valorsend="' + msg_recieved.main_conf.technology + '"]').prop('selected', true);
     $('#backbone').val(msg_recieved.main_conf.backbone);
@@ -1896,6 +1891,9 @@ function lookForGeneral() {
                 console.log("advancedButtonSettings");
                 $('.montanteModal ').attr('disabled', false);
                 $("#NotRespondingMont").val(0);
+
+                $("#backbone").change();
+
 
                 if($("#NotRespondingAddr").attr("disabled") == "disabled"){
                     $("#NotRespondingMont").attr("disabled", true);
@@ -1969,15 +1967,26 @@ function instanceFunctions() {
             case 0:
                 $('#toneVolumeContainer').hide();
                 $('#sintesisLanguageContainer').hide();
+
+                $('#alertSynthNotDetected').hide();
                 break;
         
             case 1:
                 $('#toneVolumeContainer').show();
                 $('#sintesisLanguageContainer').hide();
+
+                $('#alertSynthNotDetected').hide();
+
                 break;
             case 2: 
                 $('#toneVolumeContainer').show();
                 $('#sintesisLanguageContainer').show();
+
+                if (msg_recieved.main_conf.synthesis_presence == 0) {
+                    $('#alertSynthNotDetected').show();
+                    
+                }
+
                 break;
         }
     });

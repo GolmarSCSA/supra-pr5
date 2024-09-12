@@ -185,6 +185,7 @@ i18n_spanish = {
     "239": "Mensajes vocales",
     "240": "Con desvío",
     "241": "Revisa la dirección si no responde antes de enviar los datos.",
+    "242": "No se ha detectado un módulo de síntesis vocal conectado a la placa. Puedes configurar esta opción, pero no se obtendrá el resultado esperado hasta que se conecte un módulo de síntesis vocal.",
 };
 
 
@@ -370,6 +371,7 @@ i18n_english = {
     "239": "Vocal messages",
     "240": "With call forwarding",
     "241": "Check the not responding address before sending the data.",
+    "242": "No vocal synthesis module has been detected connected to the panel. You can configure this option, but the expected result will not be obtained until a vocal synthesis module is connected.",
 
 };
 
@@ -554,6 +556,7 @@ i18n_francais = {
     "239": "Messages vocaux",
     "240": "Avec déviation",
     "241": "Vérifiez l'adresse si elle ne répond pas avant d'envoyer les données.",
+    "242": "Aucun module de synthèse vocale n'a été détecté connecté à la plaque. Vous pouvez configurer cette option, mais le résultat attendu ne sera pas obtenu tant qu'un module de synthèse vocale ne sera pas connecté.",
 };
 
 i18n_nederlands = {
@@ -737,7 +740,7 @@ i18n_nederlands = {
     "239": "Vocale berichten",
     "240": "Met doorschakeling",
     "241": "Controleer het adres als er geen antwoord is voordat u de gegevens verzendt.",
-
+    "242": "Er is geen vocale synthesemodule gedetecteerd die is aangesloten op het paneel. U kunt deze optie configureren, maar het verwachte resultaat wordt pas verkregen als een vocale synthesemodule is aangesloten.",
 
 };
 
@@ -926,6 +929,7 @@ i18n_portuguese = {
     "239": "Mensagens vocais",
     "240": "Com desvio",
     "241": "Verifique o endereço se não houver resposta antes de enviar os dados.",
+    "242": "Não foi detectado nenhum módulo de síntese vocal conectado ao painel. Você pode configurar essa opção, mas o resultado esperado não será obtido até que um módulo de síntese vocal seja conectado.",
 };
 
 
@@ -1209,6 +1213,9 @@ function actualizarLabels() {
     $("#localLightsOn")._t("178");
     $("#withRedirectLabel")._t("240");
     $("#alertNotRespondingLabel")._t("241");
+    $("#alertSynthNotDetected")._t("242");
+
+    
     //TRANSFER + CAMPOS OCULTOS
 }
 
