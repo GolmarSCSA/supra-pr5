@@ -340,6 +340,8 @@ function check_number_and_range(val, min, max) {
 }
 
 function makeFileAndDownload() {
+    console.log(msg_recieved);
+    
     var var_to_send = updateFields(msg_recieved);
     var_to_send.type = TYPE_MODULE;
     download(var_to_send, 'configuration.json', 'application/json');
@@ -681,7 +683,7 @@ function desactivar_modal_loading_RecieveAll(modal) {
 
     checkTecnology(msg_recieved.main_conf.mainBoard);
     setDataToFields();
-    structPage(true);
+    structPage(true, false);
 
     switch (msg_recieved.main_conf.technology) {
         case 0:
@@ -848,7 +850,7 @@ function SendDataJson(json_msg) {
 
 }
 
-function checkBackbone() {
+function checkBackbone(resetBackbone) {
 
     var tech = parseInt($("#technology").children("option:selected").attr('valorSend'));
     var advancedButtonSettings = $("#ConfigPuls").children("option:selected").attr('valorSend');
@@ -875,16 +877,16 @@ function checkBackbone() {
         $('#backbone').change();
     }
 
-    lookForGeneral();
+    lookForGeneral(resetBackbone);
 }
 
-function structPage(buttons) {
+function structPage(buttons, resetBackbone) {
     if (buttons == true) {
         //struct_buttons();
         struct_buttons();
     }
 
-    checkBackbone();
+    checkBackbone(resetBackbone);
 
 }
 
@@ -1877,7 +1879,7 @@ function setDataToFields() {
 
 }
 
-function lookForGeneral() {
+function lookForGeneral(resetBackbone) {
     console.log("lookForGeneral");
     let advancedButtonSettings = $("#ConfigPuls").children("option:selected").attr('valorSend');
     let general = parseInt($("#general").children("option:selected").attr('valorSend'));
@@ -1891,8 +1893,9 @@ function lookForGeneral() {
                 console.log("advancedButtonSettings");
                 $('.montanteModal ').attr('disabled', false);
                 $("#NotRespondingMont").val(0);
-
-                $("#backbone").change();
+                if (resetBackbone) {
+                    $("#backbone").change();
+                }
 
 
                 if($("#NotRespondingAddr").attr("disabled") == "disabled"){
@@ -1900,7 +1903,9 @@ function lookForGeneral() {
                 }
             }else{
                 $('.montanteModal ').attr('disabled', true);
-                $("#backbone").change();
+                if (resetBackbone) {
+                    $("#backbone").change();
+                }
 
                 
                 if($("#NotRespondingAddr").attr("disabled") == "disabled"){
@@ -2120,7 +2125,7 @@ function instanceFunctions() {
             getString("176"), //variable
             function() {
                 // user clicked "ok"
-                lookForGeneral();
+                lookForGeneral(true);
             },
             function() {
                 $('#general option[valorsend="' + (new_val == 1 ? 0 : 1) + '"]').prop('selected', true);
@@ -2305,7 +2310,7 @@ function instanceFunctions() {
         }
 
         //setDataToFields();
-        structPage(false);
+        structPage(false, false);
         $("#1_r5").prop("checked", false);
         $("#2_r5").prop("checked", false);
         $("#3_r5").prop("checked", false);
@@ -2663,7 +2668,7 @@ function instanceFunctions() {
                     $("#backbone").val(parseInt(arr_code.join(''), 2));
     
                     //setDataToFields();
-                    structPage(false);
+                    structPage(false, false);
                     $("#1_plus").prop("checked", false);
                     $("#2_plus").prop("checked", false);
                     $("#3_plus").prop("checked", false);
@@ -2723,7 +2728,7 @@ function instanceFunctions() {
                 console.log("Tech: " + typetech);
                 msg_recieved.main_conf.technology = parseInt(typetech);
                 SelectTech(typetech);
-                checkBackbone();
+                checkBackbone(true);
                 if (parseInt(typetech) == 0 || parseInt(typetech) == 1) {
                     commResToPlus();
                 } else {
@@ -2922,7 +2927,7 @@ function loadCfg() {
         msg_recieved = temp_msg_recieved;
         checkTecnology(msg_recieved.main_conf.mainBoard);
         setDataToFields();
-        structPage(true);
+        structPage(true, false);
     
         console.log("MSG: ");
         console.log(msg_recieved);
