@@ -184,7 +184,7 @@ i18n_spanish = {
     "238": "Tonos",
     "239": "Mensajes vocales",
     "240": "Con desvío",
-    "241": "Revisa la dirección si no responde antes de enviar los datos.",
+    "241": "Revise la dirección si no responde antes de enviar los datos.",
     "242": "No se ha detectado un módulo de síntesis vocal conectado a la placa. Puedes configurar esta opción, pero no se obtendrá el resultado esperado hasta que se conecte un módulo de síntesis vocal.",
 };
 
